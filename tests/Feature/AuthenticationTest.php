@@ -6,6 +6,7 @@ use App\Livewire\ApiTokenManager;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -144,7 +145,7 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
         $other = User::factory()->create();
         $token = $other->createToken('Other user token', ['read']);
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
         Livewire::actingAs($user)->test(ApiTokenManager::class)
             ->call('manageApiTokenPermissions', $token->accessToken->id);
     }
