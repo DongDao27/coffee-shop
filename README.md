@@ -45,6 +45,8 @@ composer validate
 
 `tests/Feature/RestApiTest.php` verifies CRUD, validation, search/filter/sort, pagination, and repeatable demo seeds using SQLite `:memory:` configured in `phpunit.xml`. It does not reset the local learning database.
 
+The complete suite currently passes **55 tests, 245 assertions**. A fresh clone was verified with Composer install, migrations/seeds, `npm ci`, build and tests. A separate production-mode check with `composer install --no-dev` also boots and caches configuration/routes/views without Telescope. Import `tests/postman/Coffee-App.postman_collection.json` into Postman and set its token variable using a token you create on `/api-tokens`. Create requests capture their new record IDs; delete requests should only target those disposable demo records.
+
 For frontend assets when needed: `npm install`, then `npm run dev` or `npm run build`.
 
 ## Running the completed lab
