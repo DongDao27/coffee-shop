@@ -7,6 +7,46 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Coffee Shop — REST API lab
+
+Requires PHP 8.4 (tested with 8.4.25), Composer, and SQLite extensions `pdo_sqlite`, `sqlite3`, and `fileinfo`.
+
+```powershell
+composer install
+Copy-Item .env.example .env # First installation only
+php artisan key:generate # First installation only
+New-Item database/database.sqlite -ItemType File # Only if absent
+php artisan migrate
+php artisan db:seed
+php artisan serve
+```
+
+The local database is `database/database.sqlite`. Never commit `.env` or the database.
+
+API base URL: `http://127.0.0.1:8000/api/v1`. Categories and products each expose GET list, POST, GET detail, PUT/PATCH, and DELETE. Send `Accept: application/json`; JSON request bodies containing Vietnamese must be encoded as UTF-8 in Windows PowerShell.
+
+Products support `search`, `category_id`, and `sort=price_asc|price_desc`. Both lists paginate 10 rows per page. Successful creation returns 201, deletion 204, missing records 404, and invalid input 422. Product names may repeat. The API is public for local Section 2 practice; authentication is a later section.
+
+Create the 1,000 pagination demo categories explicitly (repeatable, without duplicate demo names):
+
+```powershell
+php artisan db:seed --class=PaginationDemoSeeder
+```
+
+This seeder is separate from the default seeds. Compare `/api/v1/categories?page=1` and `?page=2` to see distinct IDs. Local demo data is not included in Git.
+
+Scramble documentation: `/docs/api`, OpenAPI JSON: `/docs/api.json` (local environment). Verify registered URLs with `php artisan route:list --path=docs`.
+
+```powershell
+php artisan test
+vendor\bin\pint --test
+composer validate
+```
+
+`tests/Feature/RestApiTest.php` verifies CRUD, validation, search/filter/sort, pagination, and repeatable demo seeds using SQLite `:memory:` configured in `phpunit.xml`. It does not reset the local learning database.
+
+For frontend assets when needed: `npm install`, then `npm run dev` or `npm run build`.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
