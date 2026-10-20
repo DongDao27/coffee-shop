@@ -25,7 +25,7 @@ The local database is `database/database.sqlite`. Never commit `.env` or the dat
 
 API base URL: `http://127.0.0.1:8000/api/v1`. Categories and products each expose GET list, POST, GET detail, PUT/PATCH, and DELETE. Send `Accept: application/json`; JSON request bodies containing Vietnamese must be encoded as UTF-8 in Windows PowerShell.
 
-Products support `search`, `category_id`, and `sort=price_asc|price_desc`. Both lists paginate 10 rows per page. Successful creation returns 201, deletion 204, missing records 404, and invalid input 422. Product names may repeat. The API is public for local Section 2 practice; authentication is a later section.
+Products support `search`, `category_id`, and `sort=price_asc|price_desc`. Both lists paginate 10 rows per page. Successful creation returns 201, deletion 204, missing records 404, and invalid input 422. Product names may repeat. Section 6 now protects both resources with Sanctum bearer tokens and `read`, `create`, `update`, `delete` abilities. No token returns 401; insufficient permission returns 403.
 
 Create the 1,000 pagination demo categories explicitly (repeatable, without duplicate demo names):
 
@@ -45,7 +45,45 @@ composer validate
 
 `tests/Feature/RestApiTest.php` verifies CRUD, validation, search/filter/sort, pagination, and repeatable demo seeds using SQLite `:memory:` configured in `phpunit.xml`. It does not reset the local learning database.
 
+The complete suite currently passes **55 tests, 245 assertions**. A fresh clone was verified with Composer install, migrations/seeds, `npm ci`, build and tests. A separate production-mode check with `composer install --no-dev` also boots and caches configuration/routes/views without Telescope. Import `tests/postman/Coffee-App.postman_collection.json` into Postman and set its token variable using a token you create on `/api-tokens`. Create requests capture their new record IDs; delete requests should only target those disposable demo records.
+
 For frontend assets when needed: `npm install`, then `npm run dev` or `npm run build`.
+
+## Running the completed lab
+
+The UI uses Blade, Tailwind 4 and Livewire 3 (bundled Alpine; no separate Alpine startup). The homepage displays categories that contain products; pagination demo categories remain available through the API. Readding a cart product replaces its quantity. Checkout validates server data, rejects empty carts, and creates signed order pages. This is order placement, without payment processing.
+
+Authentication routes include `/register`, `/login`, `/forgot-password`, `/dashboard`, `/profile`, and `/api-tokens`. Register your own account, then use the verification link in the local mail log. Profile and token screens require recent password confirmation. Profile supports password changes, confirmed 2FA with authenticator/recovery codes and account deletion. Plaintext API tokens are displayed at creation; copy them then. `/product-images` allows verified users to upload JPEG/PNG/WebP images up to 2 MB. Run `php artisan storage:link` for public image URLs.
+
+For local work, run each command in a separate terminal:
+
+```powershell
+php artisan serve
+npm run dev
+php artisan queue:work --tries=3 --timeout=60
+```
+
+`MAIL_MAILER=log` is the default: notifications are written locally, not delivered to a real inbox. Order notifications use the database queue, so a worker must run. Daily logs are in `storage/logs/laravel-YYYY-MM-DD.log`. `/telescope` is registered only in local development when the dev package exists; sensitive auth screens are excluded from request capture. Slack/email integrations require your real configuration and are not connected.
+
+Queue/scheduler demonstrations:
+
+```powershell
+php artisan lab:heartbeat
+php artisan lab:heartbeat --queue
+php artisan lab:heartbeat --queue --fail # Intentional failed-job example
+php artisan queue:work --stop-when-empty --tries=1
+php artisan queue:failed
+php artisan schedule:list
+php artisan schedule:run
+```
+
+The heartbeat runs every minute with `withoutOverlapping`. Use `schedule:work` only while observing locally, then stop it. An intentional failure remains visible in `queue:failed` after the demo. Tests use fake notifications and a separate in-memory SQLite database.
+
+The lab's original source by nghuuquyen is the reference for the layouts, components, domain models and tests: https://github.com/nghuuquyen/lab-laravel-framework . This version adapts the code to the current project's schema and adds validation, signed-route enforcement, local-only tooling and security regression tests.
+
+## Deployment status
+
+Local implementation and build are complete. No live deployment has been performed because no hosting/server/domain was supplied. Set production environment variables (`APP_ENV=production`, `APP_DEBUG=false`, real `APP_URL`), use HTTPS, point the web root to `public/`, install dependencies with `composer install --no-dev --optimize-autoloader`, build assets with `npm ci` and `npm run build`, configure persistent storage and database backups, run controlled migrations, then configure a worker and minute scheduler under the server's process manager. Preserve APP_KEY on existing deployments. Review authentication, cart/checkout, logs and API access after deploy. No real payment or external Slack/email service is configured.
 
 ## About Laravel
 
