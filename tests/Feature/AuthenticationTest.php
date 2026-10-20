@@ -116,6 +116,39 @@ class AuthenticationTest extends TestCase
         $this->withToken($token->plainTextToken)->getJson('/api/v1/products')->assertUnauthorized();
     }
 
+    public function test_two_factor_login_accepts_a_valid_authenticator_code(): void
+    {
+        $secret = (new Google2FA)->generateSecretKey();
+        $user = User::factory()->create();
+        $user->forceFill([
+            'two_factor_secret' => encrypt($secret),
+            'two_factor_recovery_codes' => encrypt(json_encode(['recovery-example'])),
+            'two_factor_confirmed_at' => now(),
+        ])->save();
+        $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect('/two-factor-challenge');
+        $this->assertGuest();
+        $this->post('/two-factor-challenge', ['code' => (new Google2FA)->getCurrentOtp($secret)])->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_repeated_invalid_logins_are_rate_limited(): void
+    {
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $this->post('/login', ['email' => 'throttle@example.test', 'password' => 'wrong'])->assertSessionHasErrors('email');
+        }
+        $this->post('/login', ['email' => 'throttle@example.test', 'password' => 'wrong'])->assertStatus(429);
+    }
+
+    public function test_token_manager_cannot_manage_another_users_token(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $token = $other->createToken('Other user token', ['read']);
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        Livewire::actingAs($user)->test(ApiTokenManager::class)
+            ->call('manageApiTokenPermissions', $token->accessToken->id);
+    }
+
     public function test_token_manager_creates_updates_and_revokes_owned_tokens(): void
     {
         $user = User::factory()->create();
