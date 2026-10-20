@@ -1,11 +1,61 @@
 @import 'tailwindcss';
-
+@import 'flag-icons/css/flag-icons.min.css';
+@import './themes/light.css';
+@import './themes/dark.css';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@theme inline {
+    --color-primary-50: var(--coffee-primary-50);
+    --color-primary-100: var(--coffee-primary-100);
+    --color-primary-200: var(--coffee-primary-200);
+    --color-primary-300: var(--coffee-primary-300);
+    --color-primary-400: var(--coffee-primary-400);
+    --color-primary-500: var(--coffee-primary-500);
+    --color-primary-600: var(--coffee-primary-600);
+    --color-primary-700: var(--coffee-primary-700);
+    --color-primary-800: var(--coffee-primary-800);
+    --color-primary-900: var(--coffee-primary-900);
+    --color-primary-950: var(--coffee-primary-950);
+    --color-on-primary: var(--coffee-on-primary);
+    --color-on-primary-50: var(--coffee-on-primary-50);
+    --color-on-primary-100: var(--coffee-on-primary-100);
+    --color-on-primary-200: var(--coffee-on-primary-200);
+    --color-on-primary-300: var(--coffee-on-primary-300);
+    --color-on-primary-400: var(--coffee-on-primary-400);
+    --color-on-primary-500: var(--coffee-on-primary-500);
+    --color-on-primary-600: var(--coffee-on-primary-600);
+    --color-on-primary-700: var(--coffee-on-primary-700);
+    --color-on-primary-800: var(--coffee-on-primary-800);
+    --color-on-primary-900: var(--coffee-on-primary-900);
+    --color-on-primary-950: var(--coffee-on-primary-950);
+    --color-surface: var(--coffee-surface);
+    --color-surface-50: var(--coffee-surface-50);
+    --color-surface-100: var(--coffee-surface-100);
+    --color-surface-200: var(--coffee-surface-200);
+    --color-surface-300: var(--coffee-surface-300);
+    --color-surface-400: var(--coffee-surface-400);
+    --color-surface-500: var(--coffee-surface-500);
+    --color-surface-600: var(--coffee-surface-600);
+    --color-surface-700: var(--coffee-surface-700);
+    --color-surface-800: var(--coffee-surface-800);
+    --color-surface-900: var(--coffee-surface-900);
+    --color-surface-950: var(--coffee-surface-950);
+    --color-on-surface: var(--coffee-on-surface);
+    --color-on-surface-50: var(--coffee-on-surface-50);
+    --color-on-surface-100: var(--coffee-on-surface-100);
+    --color-on-surface-200: var(--coffee-on-surface-200);
+    --color-on-surface-300: var(--coffee-on-surface-300);
+    --color-on-surface-400: var(--coffee-on-surface-400);
+    --color-on-surface-500: var(--coffee-on-surface-500);
+    --color-on-surface-600: var(--coffee-on-surface-600);
+    --color-on-surface-700: var(--coffee-on-surface-700);
+    --color-on-surface-800: var(--coffee-on-surface-800);
+    --color-on-surface-900: var(--coffee-on-surface-900);
+    --color-on-surface-950: var(--coffee-on-surface-950);
+    --color-background: var(--coffee-background);
+    --color-on-background: var(--coffee-on-background);
 }
+[x-cloak] { display: none !important; }
+body { min-height: 100vh; color: var(--coffee-on-surface-600); }
+button, a { touch-action: manipulation; }

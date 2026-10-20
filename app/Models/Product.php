@@ -10,6 +10,20 @@ class Product extends Model
 {
     use HasFactory;
 
+    public const DEFAULT_CURRENCY = 'VND';
+
+    public const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93';
+
+    public function getFormattedPriceAttribute(): string
+    {
+        return $this->getFormattedTotalAmount();
+    }
+
+    public function getFormattedTotalAmount(int $quantity = 1): string
+    {
+        return number_format((float) $this->price * $quantity).' '.$this->currency;
+    }
+
     protected $fillable = [
         'name',
         'description',
