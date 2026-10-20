@@ -52,6 +52,17 @@
             <div class="text-on-surface-500 p-3">
                 {{ __('Themes') }}
             </div>
+            <div class="text-on-surface-600 flex flex-col gap-2 p-3">
+                @auth
+                    <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
+                    <a href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
+                    <a href="{{ route('apiTokens.index') }}">{{ __('API Tokens') }}</a>
+                    <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">{{ __('Logout') }}</button></form>
+                @else
+                    <a href="{{ route('login') }}">{{ __('Login') }}</a>
+                    <a href="{{ route('register') }}">{{ __('Register') }}</a>
+                @endauth
+            </div>
 
             <a @click="setTheme('theme-light')"
                :class="selectedTheme === 'theme-light' ? 'bg-primary-600 text-on-primary-50' : 'bg-surface text-on-surface-500'"
