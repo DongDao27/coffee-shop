@@ -113,6 +113,10 @@ return [
     ],
 
     'ignore_paths' => [
+        'profile*',
+        'api-tokens*',
+        'user/*',
+        'two-factor-challenge*',
         'livewire*',
         'nova-api*',
         'pulse*',
