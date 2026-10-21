@@ -55,6 +55,10 @@
             <div class="text-on-surface-600 flex flex-col gap-2 p-3">
                 @auth
                     <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
+                    <a href="{{ route('manage.products.index') }}">Quản lý sản phẩm</a>
+                    @unless(auth()->user()->hasVerifiedEmail())
+                        <a href="{{ route('verification.notice') }}">Xác minh email</a>
+                    @endunless
                     <a href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
                     <a href="{{ route('apiTokens.index') }}">{{ __('API Tokens') }}</a>
                     <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">{{ __('Logout') }}</button></form>
