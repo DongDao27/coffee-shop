@@ -9,6 +9,7 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
@@ -45,8 +46,16 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.reset-password', ['request' => $request]);
         });
 
-        Fortify::verifyEmailView(function () {
-            return view('auth.verify-email');
+        Fortify::verifyEmailView(function (Request $request) {
+            $localVerificationUrl = null;
+            if (app()->environment('local') && config('mail.default') === 'log' && ! $request->user()->hasVerifiedEmail()) {
+                $localVerificationUrl = URL::temporarySignedRoute('verification.verify', now()->addMinutes(60), [
+                    'id' => $request->user()->getKey(),
+                    'hash' => sha1($request->user()->getEmailForVerification()),
+                ]);
+            }
+
+            return view('auth.verify-email', compact('localVerificationUrl'));
         });
 
         Fortify::confirmPasswordView(function () {

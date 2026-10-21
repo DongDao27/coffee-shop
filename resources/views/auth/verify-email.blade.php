@@ -2,6 +2,15 @@
     <div class="py-6">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <x-panel>
+                <h1 class="text-2xl font-bold text-on-surface-600 mb-4">Xác minh email</h1>
+                <p class="text-on-surface-600 mb-3">Tài khoản: {{ auth()->user()->email }}</p>
+                @if($errors->any())<p role="alert" class="text-red-600">{{ $errors->first() }}</p>@endif
+                @if(config('mail.default') === 'log')
+                    <p class="text-on-surface-600 mb-4">Đang dùng mail log: thư được ghi vào storage/logs, không gửi đến hộp thư thật.</p>
+                @endif
+                @if($localVerificationUrl ?? null)
+                    <p class="mb-4"><a class="text-primary-600 underline" href="{{ $localVerificationUrl }}">Mở liên kết xác minh (local)</a></p>
+                @endif
                 <div class="mb-4 text-on-surface-500 py-4">
                     {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
                 </div>
@@ -18,7 +27,7 @@
 
                         <div>
                             <x-button type="submit">
-                                {{ __('Resend Verification Email') }}
+                                Gửi lại email xác minh
                             </x-button>
                         </div>
                     </form>
